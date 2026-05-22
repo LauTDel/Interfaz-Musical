@@ -1,0 +1,91 @@
+<!doctype html> 
+<html lang="es">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<script src="https://aframe.io/releases/1.7.1/aframe.min.js"></script>
+        <script src="https://unpkg.com/aframe-event-set-component@5/dist/aframe-event-set-component.min.js"></script>
+        <script>
+            AFRAME.registerComponent('click-audio', {
+                schema: {
+                    src: { type: 'string' },
+                },
+
+                init: function () {
+                    const selector = this.data.src
+
+                    this.el.addEventListener('mouseenter', function () {
+
+                        // detener todos los audios
+                        const audios = document.querySelectorAll('audio')
+
+                        audios.forEach(function (a) {
+                            a.pause()
+                            a.currentTime = 0
+                        })
+
+                        // reproducir solo el seleccionado
+                        const audio = document.querySelector(selector)
+
+                        if (audio) {
+                            audio.play().catch(function (error) {
+                                console.log('error audio:', error)
+                            })
+                        }
+                    })
+                },
+            })
+        </script>
+	</head>
+
+	<body>
+        <a-scene
+            cursor="rayOrigin: mouse"
+            background="color: #1a1a1a"
+            shadow="type: pcfsoft"
+        >
+			
+			<a-assets>
+				<audio id="sonido-1" src="sonido/music.mp3" preload="auto"></audio>
+				<audio
+					id="sonido-2"
+					src="sonido/music_2.mp3"
+					preload="auto"
+				></audio>
+			</a-assets>
+
+			<a-entity
+				gltf-model="radioui/scene.gltf"
+				position="0 0 -8"
+				scale="1.5 1.5 1.5"
+			></a-entity>
+
+			<!-- izquierda> -->
+			<a-sphere
+				id="zona-plato-izq"
+				position="-0.9 -0.3 -7.5"
+				scale="0.25 0.25 0.25"
+				material="opacity: 0.5; transparent: true; color: red"
+				click-audio="src: #sonido-1"
+				class="clickable"
+			></a-sphere>
+
+			<!-- derecha -->
+			<a-sphere
+				id="zona-plato-der"
+				position="0.9 -0.3 -7.5"
+				scale="0.25 0.25 0.25"
+				material="opacity: 0.5; transparent: true; color: red"
+				click-audio="src: #sonido-2"
+				class="clickable"
+			></a-sphere>
+
+            <a-camera>
+                <a-cursor
+                    raycaster="objects: .clickable"
+                ></a-cursor>
+            </a-camera>
+          
+		</a-scene>
+	</body>
+</html>
